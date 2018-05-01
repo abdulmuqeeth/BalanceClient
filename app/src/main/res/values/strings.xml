@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">BalanceClient</string>
+    <string name="create_db">Create Database</string>
+    <string name="query_db">Query Database</string>
+    <string name="month">Month</string>
+    <string name="day">Day</string>
+    <string name="range">Range</string>
+    <string name="year">Year</string>
+
 </resources>
