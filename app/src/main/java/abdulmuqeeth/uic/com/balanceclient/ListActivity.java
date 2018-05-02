@@ -19,8 +19,6 @@ public class ListActivity extends AppCompatActivity {
     private ArrayAdapter mAdapter;
     private List<String> itemList = new ArrayList<String>();
 
-    //Intent mIntent = getIntent();
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,22 +36,17 @@ public class ListActivity extends AppCompatActivity {
                 i++;
         }
 
-        System.out.println("Length of pList= "+pList.length);
+        //System.out.println("Length of pList= "+pList.length);
 
         for(int j=0; j< pList.length; j++){
-
-            String s = dList[j].getmMonth()+"/"+dList[j].getmDay()+"/"+dList[j].getmYear()+"  Closing Balance : "+dList[j].getmCash();
-            System.out.println("Here "+s);
+            String s = dList[j].getmMonth()+"/"+dList[j].getmDay()+"/"+dList[j].getmYear()+" "+dList[j].getmDayOfWeek()+"  Closing Balance : "+dList[j].getmCash();
+            //System.out.println("Here "+s);
             itemList.add(s);
         }
-
 
         mList = (ListView) findViewById(R.id.main_list);
 
         mAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, itemList);
-
         mList.setAdapter(mAdapter);
-
-
     }
 }

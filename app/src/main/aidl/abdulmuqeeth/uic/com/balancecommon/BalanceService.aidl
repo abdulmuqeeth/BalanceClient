@@ -5,7 +5,7 @@ import abdulmuqeeth.uic.com.balancecommon.DailyCash;
 
 // Declare any non-default types here with import statements
 
-interface Balance {
+interface BalanceService {
     boolean createDatabase();
     DailyCash[] dailyCash(int day, int month, int year , int range);
 }

@@ -15,14 +15,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import java.util.List;
-
-import abdulmuqeeth.uic.com.balancecommon.Balance;
+import abdulmuqeeth.uic.com.balancecommon.BalanceService;
 import abdulmuqeeth.uic.com.balancecommon.DailyCash;
 
 public class MainActivity extends AppCompatActivity {
 
-    private Balance mBalanceService;
+    private BalanceService mBalanceService;
     private Boolean isBound = false;
 
     private String mMonth;
@@ -33,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
     private boolean isDbCreated = false;
 
     private Button query;
+    private Button create;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        final Button create = (Button) findViewById(R.id.create_db);
+        create = (Button) findViewById(R.id.create_db);
 
         query = (Button) findViewById(R.id.query_db);
 
@@ -55,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
                             isDbCreated = mBalanceService.createDatabase();
                             if(isDbCreated){
                                 query.setEnabled(true);
+                                create.setEnabled(false);
                             }
                             Log.i(getClass().toString(), "Database Created");
                         }catch (RemoteException e) {
@@ -68,18 +68,10 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
         final EditText month = (EditText) findViewById(R.id.month);
         final EditText day = (EditText) findViewById(R.id.day);
         final EditText year = (EditText) findViewById(R.id.year);
         final EditText range = (EditText) findViewById(R.id.range);
-
-        /*if(Integer.parseInt(mRange) > 30 || Integer.parseInt(mRange) <1){
-            Toast.makeText(getApplicationContext(), "Range should be between 1 and 30", Toast.LENGTH_SHORT).show();
-        }*/
-
-
-
 
         if(isDbCreated == false){
             query.setEnabled(false);
@@ -121,8 +113,6 @@ public class MainActivity extends AppCompatActivity {
                         return;
                     }
 
-
-
                     if(Integer.parseInt(mYear) == 2018) {
                         if(Integer.parseInt(mMonth)==3){
                             if(Integer.parseInt(mDay)>2){
@@ -133,15 +123,6 @@ public class MainActivity extends AppCompatActivity {
                         if(Integer.parseInt(mMonth)>3){
                             Toast.makeText(getApplicationContext(), "Date out of bounds", Toast.LENGTH_SHORT).show();
                             return;
-                        }
-                    }
-
-                    if(Integer.parseInt(mYear) == 2017) {
-                        if(Integer.parseInt(mMonth)==1){
-                            if(Integer.parseInt(mDay)<3){
-                                Toast.makeText(getApplicationContext(), "Date out of bounds", Toast.LENGTH_SHORT).show();
-                                return;
-                            }
                         }
                     }
 
@@ -183,25 +164,20 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-
-
-
     }
 
     private final ServiceConnection mConnection = new ServiceConnection() {
 
         public void onServiceConnected(ComponentName className, IBinder iservice) {
 
-            mBalanceService = Balance.Stub.asInterface(iservice);
+            mBalanceService = BalanceService.Stub.asInterface(iservice);
 
             if(mBalanceService == null) {
                 Log.i(getClass().toString(), "null");
             }
 
             Log.i(getClass().toString(), "isBound true");
-
             isBound = true;
-
         }
 
         public void onServiceDisconnected(ComponentName className) {
@@ -222,15 +198,17 @@ public class MainActivity extends AppCompatActivity {
         System.out.println("In on resume");
 
         query.setEnabled(false);
+        create.setEnabled(true);
         if (!isBound) {
 
             boolean b = false;
-            Intent i = new Intent(Balance.class.getName());
+            Intent i = new Intent(BalanceService.class.getName());
 
             // UB:  Stoooopid Android API-20 no longer supports implicit intents
             // to bind to a service #@%^!@..&**!@
             // Must make intent explicit or lower target API level to 19.
             ResolveInfo info = getPackageManager().resolveService(i, 0);
+
             i.setComponent(new ComponentName(info.serviceInfo.packageName, info.serviceInfo.name));
 
             b = bindService(i, this.mConnection, Context.BIND_AUTO_CREATE);
@@ -247,7 +225,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
 
-            //System.out.println("Reached here"+isBound);
             if (isBound) {
                 unbindService(this.mConnection);
                 //Set isBound to false
