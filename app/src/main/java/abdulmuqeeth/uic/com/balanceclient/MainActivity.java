@@ -15,7 +15,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import abdulmuqeeth.uic.com.balancecommon.Balance;
@@ -25,7 +24,6 @@ public class MainActivity extends AppCompatActivity {
 
     private Balance mBalanceService;
     private Boolean isBound = false;
-    private List<DailyCash> mList;
 
     private String mMonth;
     private String mDay;
@@ -123,6 +121,30 @@ public class MainActivity extends AppCompatActivity {
                         return;
                     }
 
+
+
+                    if(Integer.parseInt(mYear) == 2018) {
+                        if(Integer.parseInt(mMonth)==3){
+                            if(Integer.parseInt(mDay)>2){
+                                Toast.makeText(getApplicationContext(), "Date out of bounds", Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+                        }
+                        if(Integer.parseInt(mMonth)>3){
+                            Toast.makeText(getApplicationContext(), "Date out of bounds", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                    }
+
+                    if(Integer.parseInt(mYear) == 2017) {
+                        if(Integer.parseInt(mMonth)==1){
+                            if(Integer.parseInt(mDay)<3){
+                                Toast.makeText(getApplicationContext(), "Date out of bounds", Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+                        }
+                    }
+
                     try {
                         if(Integer.parseInt(mDay) < 1 || Integer.parseInt(mDay) >31){
                             Toast.makeText(getApplicationContext(), "Please enter a valid day between 1 and 31", Toast.LENGTH_SHORT).show();
@@ -196,7 +218,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
 
         super.onResume();
-        isBound = false;
+        //isBound = false;
         System.out.println("In on resume");
 
         query.setEnabled(false);
@@ -225,9 +247,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
 
-            System.out.println("Reached here"+isBound);
+            //System.out.println("Reached here"+isBound);
             if (isBound) {
                 unbindService(this.mConnection);
+                //Set isBound to false
+                isBound = false;
             }
 
         super.onPause();
